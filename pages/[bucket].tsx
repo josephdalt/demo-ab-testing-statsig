@@ -1,6 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
-import { Statsig } from "statsig-react";
+import { Statsig, useGate } from "statsig-react";
 import Image from "next/image";
 import Cookie from "js-cookie";
 import {
@@ -42,6 +42,9 @@ export const getStaticPaths: GetStaticPaths<{ bucket: string }> = async () => {
 
 function BucketPage({ bucket }: Props) {
   const { reload } = useRouter();
+  const inTest = useGate("test_gate").value;
+
+  console.log("Feature flag inTest:\n", inTest);
 
   function resetBucket() {
     Cookie.remove(UID_COOKIE);
@@ -53,6 +56,8 @@ function BucketPage({ bucket }: Props) {
     <Page className="flex flex-col gap-12">
       <section className="flex flex-col gap-6">
         <Text variant="h1">Performant experimentation with Statsig</Text>
+
+        <Text>Feature flag test: {inTest ? "Yes" : "No"} </Text>
 
         {bucket === "test" && (
           <>
